@@ -6,10 +6,13 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
-
 public class Game {
 
   private static final String BAD_GUESS_PATTERN_FORMAT = "^.*[^%s].*$";
+  private static final String ILLEGAL_LENGTH_MESSAGE =
+      "Invalid guess length: required=%d; provided=%d.";
+  private static final String ILLEGAL_CHARACTER_MESSAGE =
+      "Guess includes invalid characters: required=%s; provided=%s.";
 
   private final Code code;
   private final List<Guess> guesses;
@@ -23,7 +26,6 @@ public class Game {
     this.pool = pool;
     this.length = length;
     badGuessPattern = String.format(BAD_GUESS_PATTERN_FORMAT, pool);
-
   }
 
   public Code getCode() {
@@ -42,15 +44,18 @@ public class Game {
     return length;
   }
 
-  public Guess guess(String text){
+  public Guess guess(String text) {
     if (text.length() != length) {
-      throw new IllegalArgumentException();
+      throw new IllegalArgumentException(
+          String.format(ILLEGAL_LENGTH_MESSAGE, length, text.length()));
     }
     if (text.matches(badGuessPattern)) {
-      throw new IllegalArgumentException();
+      throw new IllegalArgumentException(String.format(
+          ILLEGAL_CHARACTER_MESSAGE, pool, text));
     }
     Guess guess = code.new Guess(text);
     guesses.add(guess);
     return guess;
   }
+
 }
