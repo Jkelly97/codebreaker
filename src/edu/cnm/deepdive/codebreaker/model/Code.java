@@ -23,7 +23,6 @@ public class Code {
   @Override
   public String toString() {
     return new String(secret);
-
   }
 
   public class Guess {
@@ -67,7 +66,6 @@ public class Code {
 
       this.correct = correct;
       this.close = close;
-
     }
 
     private Map<Character, Set<Integer>> getLetterMap(String text) {

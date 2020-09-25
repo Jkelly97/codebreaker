@@ -22,7 +22,7 @@ public class Game {
     guesses = new LinkedList<>();
     this.pool = pool;
     this.length = length;
-    badGuessPattern = String.format(BAD_GUESS_PATTERN_FORMAT);
+    badGuessPattern = String.format(BAD_GUESS_PATTERN_FORMAT, pool);
 
   }
 
@@ -47,7 +47,7 @@ public class Game {
       throw new IllegalArgumentException();
     }
     if (text.matches(badGuessPattern)) {
-      //TODO Do something to indicate the guess is bad.
+      throw new IllegalArgumentException();
     }
     Guess guess = code.new Guess(text);
     guesses.add(guess);
