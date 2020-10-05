@@ -48,9 +48,10 @@ public class Game {
     return guesses.size();
   }
 
-  public Guess guess(String text) {
+  public Guess guess(String text)
+      throws IllegalGuessLengthException, IllegalGuessCharacterException {
     if (text.length() != length) {
-      throw new IllegalArgumentException(
+      throw new IllegalGuessLengthException(
           String.format(ILLEGAL_LENGTH_MESSAGE, length, text.length()));
     }
     if (text.matches(badGuessPattern)) {
