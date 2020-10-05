@@ -2,43 +2,50 @@ package edu.cnm.deepdive.codebreaker.controller;
 
 import edu.cnm.deepdive.codebreaker.model.Code.Guess;
 import edu.cnm.deepdive.codebreaker.model.Game;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
 import java.security.SecureRandom;
+import java.util.NoSuchElementException;
+import java.util.Scanner;
 
 public class Codebreaker {
 
+  private static final String PROLOGUE_FORMAT = "Pool: %s. Code length: %d%n";
+  private static final String GUESS_PROMPT_FORMAT = "Guess #%d: ";
+  private static final String GUESS_RESULT_FORMAT = "In position: %d. Out of position: %d.%n";
+  private static final String SUCCESS_MESSAGE_FORMAT =
+      "Correct! Secret code (\"%s\") found in %d guesses.%n";
+  private static final String NO_INPUT_MESSAGE = "Unable to read input. Program stopped.";
   private static final String CHARACTER_POOL = "ROYGBIV";
   private static final int CODE_LENGTH = 4;
 
   public static void main(String[] args) {
-    Game game = new Game(CHARACTER_POOL, CODE_LENGTH, new SecureRandom());
-    System.out.printf("Pool: %s. Code length: %d%n", CHARACTER_POOL, CODE_LENGTH);
+    try (Scanner scanner = new Scanner(System.in)) {
+      Game game = new Game(CHARACTER_POOL, CODE_LENGTH, new SecureRandom());
+      System.out.printf(PROLOGUE_FORMAT, game.getPool(), game.getLength());
+      //noinspection StatementWithEmptyBody
+      while (!solved(scanner, game)) {}
+    } catch (NoSuchElementException | IllegalStateException e) {
+      System.out.println(NO_INPUT_MESSAGE);
+      e.printStackTrace();
+      System.exit(1);
+    }
+  }
+
+  private static boolean solved(Scanner scanner, Game game) {
     boolean correct = false;
-    Reader input = new InputStreamReader(System.in);
-    BufferedReader reader = new BufferedReader(input);
-    do {
-      try {
-        String text = reader.readLine();
-        Guess guess = game.guess(text);
-        if (guess.getCorrect() == CODE_LENGTH) {
-          System.out.printf("Congratulations! The secret code was %s.%n", game.getCode());
-          correct = true;
-        } else {
-          System.out.printf("Correct: %d. Close: %d.%n", guess.getCorrect(), guess.getClose());
-        }
-      } catch (IOException e) {
-        System.out.println("Unable to read input. Program stopped.");
-        e.printStackTrace();
-        System.exit(1);
-      } catch (IllegalArgumentException e) {
-        System.out.println(e.getMessage());
-      } finally{
-        System.out.println("Please guess again.");
+    try {
+      System.out.printf(GUESS_PROMPT_FORMAT, game.getGuessCount() + 1);
+      String text = scanner.nextLine().trim().toUpperCase();
+      Guess guess = game.guess(text);
+      if (guess.getCorrect() == game.getLength()) {
+        System.out.printf(SUCCESS_MESSAGE_FORMAT, game.getCode(), game.getGuessCount());
+        correct = true;
+      } else {
+        System.out.printf(GUESS_RESULT_FORMAT, guess.getCorrect(), guess.getClose());
       }
-    } while (!correct);
+    } catch (IllegalArgumentException e) {
+      System.out.println(e.getMessage());
+    }
+    return correct;
   }
 
 }
