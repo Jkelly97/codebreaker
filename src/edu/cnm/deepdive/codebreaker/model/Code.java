@@ -9,10 +9,21 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
+/**
+ *developes a sercet code through random generation.
+ */
 public class Code {
 
   private final char[] secret;
 
+  /**
+   * Initializes this instance by generating a random {@link String}, of length {@code length} with
+   * characters taken from {@code pool}. A source of randomness must be provided in {@code rng}.
+   *
+   * @param pool integers allowed in the  the code.
+   * @param length number of characters in the code.
+   * @param rng the randomization.
+   */
   public Code(String pool, int length, Random rng) {
     secret = new char[length];
     for (int i = 0; i < secret.length; i++) {
@@ -25,6 +36,9 @@ public class Code {
     return new String(secret);
   }
 
+  /**
+   *
+   */
   public class Guess {
 
     private static final String STRING_FORMAT = "{text: \"%s\", correct: %d, close: %d}";
@@ -33,6 +47,13 @@ public class Code {
     private final int correct;
     private final int close;
 
+    /**
+     * Initializes this instance by computing the number of characters in the {@code text} that are
+     * also in the {@link Code}, and are in the same position in both, as well as the number of
+     * additional characters that are in both, but not in the same position.
+     *
+     * @param text Guess content.
+     */
     public Guess(String text) {
       this.text = text;
       int correct = 0;
@@ -85,14 +106,29 @@ public class Code {
       return String.format(STRING_FORMAT, text, correct, close);
     }
 
+    /**
+     * Returns the text of instance.
+     *
+     * @return
+     */
     public String getText() {
       return text;
     }
 
+    /**
+     * Returns the characters guessed that are also in the code itself that are also in the same
+     * place in the code and the guess.
+     *
+     */
     public int getCorrect() {
       return correct;
     }
 
+    /**
+     *  Returns the characters in the guess that are also in the code but not in the same place
+     *  in both the code and the guess.
+     *
+     */
     public int getClose() {
       return close;
     }
